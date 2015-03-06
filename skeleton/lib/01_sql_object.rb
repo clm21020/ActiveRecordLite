@@ -34,15 +34,28 @@ class SQLObject
   end
 
   def self.all
-    # ...
+    parse_all(DBConnection.execute(<<-SQL))
+      SELECT
+        #{table_name}.*
+      FROM
+        #{table_name}
+    SQL
   end
 
   def self.parse_all(results)
-    # ...
+    results.map{ |row| self.new(row) }
   end
 
   def self.find(id)
-    # ...
+    result = DBConnection.execute(<<-SQL)
+      SELECT
+        #{table_name}.*
+      FROM
+        #{table_name}
+      WHERE
+        #{table_name}.id = #{id}
+    SQL
+    result.empty? ? nil : self.new(result.first)
   end
 
   def initialize(params = {})
